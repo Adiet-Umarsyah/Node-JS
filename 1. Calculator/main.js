@@ -1,9 +1,12 @@
+// Using readline/promises instead of readline because readline use an old callback api, while readline/promises use a newer promise based api
 import * as readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
+import { Calculation } from "./calculation";
 
 const rl = readline.createInterface({ input, output });
 
 async function InputNumber() {
+  // CMD Input and type conversion
   const n1 = Number(await rl.question("Insert The First Number: "));
   const n2 = Number(await rl.question("Insert The Second Number: "));
   const o = await rl.question("Insert An Operation (+,-,*,/): ");
@@ -11,38 +14,4 @@ async function InputNumber() {
   rl.close();
 }
 
-function Calculation(number1, number2, operation) {
-  let total = 0;
-
-  if (operation == "+") {
-    total = add(number1, number2);
-  } else if (operation == "-") {
-    total = subtract(number1, number2);
-  } else if (operation == "*") {
-    total = multiply(number1, number2);
-  } else if (operation == "/") {
-    total = divide(number1, number2);
-  } else {
-    console.log("Invalid Operation");
-  }
-  console.log(total);
-}
-
-function add(a, b) {
-  return a + b;
-}
-
-function subtract(a, b) {
-  return a - b;
-}
-
-function multiply(a, b) {
-  return a * b;
-}
-
-function divide(a, b) {
-  return a / b;
-}
-
-Calculation(6, 3, "/");
 InputNumber();
