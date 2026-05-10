@@ -1,3 +1,16 @@
+import * as readline from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
+
+const rl = readline.createInterface({ input, output });
+
+async function InputNumber() {
+  const n1 = Number(await rl.question("Insert The First Number: "));
+  const n2 = Number(await rl.question("Insert The Second Number: "));
+  const o = await rl.question("Insert An Operation (+,-,*,/): ");
+  Calculation(n1, n2, o);
+  rl.close();
+}
+
 function Calculation(number1, number2, operation) {
   let total = 0;
 
@@ -32,3 +45,4 @@ function divide(a, b) {
 }
 
 Calculation(6, 3, "/");
+InputNumber();
