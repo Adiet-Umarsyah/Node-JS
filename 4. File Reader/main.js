@@ -4,71 +4,162 @@ import { stdin as input, stdout as output } from "node:process";
 import { fileURLToPath } from "url";
 import path from "path";
 
-// Recreate __filename and __dirname safely
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log(__dirname);
+const rl = readline.createInterface({
+  input,
+  output,
+});
 
-async function WriteFile() {
-  const rl = readline.createInterface({ input, output });
-
-  const title = await rl.question("Please enter the file name: ");
-  const text = await rl.question("Please enter the file content: ");
-
-  const existingFiles = await searchFiles(title);
-  console.log(existingFiles);
-  if (existingFiles && existingFiles.length > 0) {
-    console.log(`File(s) with the name "${title}" already exist:`);
-    try {
-      await fs.appendFile(`${title}.txt`, `\n${text}`, "utf8");
-      console.log("newline added to the existing file successfully");
-    } catch (error) {
-      console.log(error);
-    }
-  } else {
-    try {
-      await fs.writeFile(`${title}.txt`, `${text}`, "utf8");
-      console.log("file created successfully");
-    } catch (error) {
-      console.log(error);
-    }
+async function fileExists(filePath) {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
   }
-  rl.close();
 }
 
-async function searchFiles(searchString) {
-  try {
-    // Read all file and folder names in the directory
-    const files = await fs.readdir(__dirname);
-    console.log(files);
-    // Filter the array to find matching filenames
-    const matchedFiles = files.filter((file) => {
-      // Check if it is a file (not a folder) and contains the search text
-      // const fullPath = path.join(__dirname, file);
-      return file.toLowerCase().includes(searchString.toLowerCase());
-    });
-    console.log(matchedFiles);
+async function getFileName() {
+  const title = (await rl.question("Please enter the file name: ")).trim();
 
-    return matchedFiles;
-  } catch (error) {
-    console.error("Error reading directory:", error);
+  if (!title) {
+    console.log("Filename cannot be empty.");
     return null;
   }
+
+  return title;
 }
 
-async function selectFile() {
-  const rl = readline.createInterface({ input, output });
+async function writeFile() {
+  const title = await getFileName();
 
-  const title = await rl.question("Please enter the file name: ");
+  if (!title) return;
+
+  const text = await rl.question("Please enter the file content: ");
+
+  const filePath = path.join(__dirname, `${title}.txt`);
+
   try {
-    await fs.readFile(`${title}.txt`, "utf8").then((data) => {
-      console.log(data);
-    });
+    if (await fileExists(filePath)) {
+      await fs.appendFile(filePath, `\n${text}`, "utf8");
+      console.log("\nContent added successfully.");
+    } else {
+      await fs.writeFile(filePath, text, "utf8");
+      console.log("\nFile created successfully.");
+    }
   } catch (error) {
-    console.log(`file with the name "${title}" does not exist`);
+    console.error("Error writing file:", error.message);
   }
+}
+
+async function searchFiles() {
+  try {
+    const entries = await fs.readdir(__dirname, {
+      withFileTypes: true,
+    });
+
+    const files = entries
+      .filter(
+        (entry) =>
+          entry.isFile() && path.extname(entry.name).toLowerCase() === ".txt",
+      )
+      .map((entry) => entry.name);
+
+    console.log("\n========== FILES ==========");
+
+    if (files.length === 0) {
+      console.log("No text files found.");
+    } else {
+      files.forEach((file, index) => {
+        console.log(`${index + 1}. ${file}`);
+      });
+    }
+
+    console.log("===========================\n");
+  } catch (error) {
+    console.error("Unable to read directory:", error.message);
+  }
+}
+
+async function readFile() {
+  const title = await getFileName();
+
+  if (!title) return;
+
+  const filePath = path.join(__dirname, `${title}.txt`);
+
+  try {
+    const data = await fs.readFile(filePath, "utf8");
+
+    console.log("\n========== FILE CONTENT ==========");
+    console.log(data);
+    console.log("==================================\n");
+  } catch {
+    console.log(`\nFile "${title}.txt" does not exist.\n`);
+  }
+}
+
+async function deleteFile() {
+  const title = await getFileName();
+
+  if (!title) return;
+
+  const filePath = path.join(__dirname, `${title}.txt`);
+
+  try {
+    await fs.unlink(filePath);
+    console.log("\nFile deleted successfully.\n");
+  } catch {
+    console.log(`\nFile "${title}.txt" does not exist.\n`);
+  }
+}
+
+async function start() {
+  let run = true;
+
+  while (run) {
+    console.log("========== FILE MANAGER ==========");
+    console.log("1. Write File");
+    console.log("2. Read File");
+    console.log("3. List Files");
+    console.log("4. Delete File");
+    console.log("5. Exit");
+    console.log("==================================");
+
+    const option = (await rl.question("Select an option: ")).trim();
+
+    console.log();
+
+    switch (option) {
+      case "1":
+        await writeFile();
+        break;
+
+      case "2":
+        await readFile();
+        break;
+
+      case "3":
+        await searchFiles();
+        break;
+
+      case "4":
+        await deleteFile();
+        break;
+
+      case "5":
+        run = false;
+        console.log("Goodbye!");
+        break;
+
+      default:
+        console.log("Invalid option.\n");
+    }
+  }
+
   rl.close();
 }
 
-WriteFile();
+start();
