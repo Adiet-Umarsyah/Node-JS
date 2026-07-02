@@ -50,6 +50,32 @@ app.post("/calculation", (req, res) => {
   res.json({ total });
 });
 
+app.get("/calculation", (req, res) => {
+  let { a, b, operation } = req.query;
+  a = Number(a);
+  b = Number(b);
+  let total = 0;
+
+  if (Number.isNaN(a) || Number.isNaN(b)) {
+    res.send("Please Enter A Valid Number");
+    return;
+  }
+
+  // on query you can't put + because express will parse it as a blank space, you need to put it's url encoding which is %2B so that express will translate it back into +
+  if (operation == "+") {
+    total = a + b;
+  } else if (operation == "-") {
+    total = a - b;
+  } else if (operation == "*") {
+    total = a * b;
+  } else if (operation == "/") {
+    total = a / b;
+  } else {
+    console.log("Invalid Operation");
+  }
+  res.json({ total });
+});
+
 // express 5 no longer use this
 // app.all("*", (req, res) => {
 //   res.status(404).json({ message: "Page Not Found" });
