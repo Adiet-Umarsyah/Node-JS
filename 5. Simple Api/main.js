@@ -1,4 +1,5 @@
 import express from "express";
+import { getCustomer, calculateBody, calculateQuery } from "./controller.js";
 
 const app = express();
 
@@ -9,72 +10,11 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/:id", (req, res, next) => {
-  const id = Number(req.params.id);
+app.get("/:id", getCustomer);
 
-  if (Number.isNaN(id)) {
-    return next(); // Continue to the 404 handler
-  }
+app.post("/calculation", calculateBody);
 
-  switch (id) {
-    case 1:
-      res.send("You Are Customer Number 1");
-      break;
-    case 2:
-      res.send("You Are Customer Number 2");
-      break;
-    case 3:
-      res.send("You Are Customer Number 3");
-      break;
-    default:
-      res.send("You Are Not Customer");
-      break;
-  }
-});
-
-app.post("/calculation", (req, res) => {
-  const { a, b, operation } = req.body;
-  let total = 0;
-
-  if (operation == "+") {
-    total = a + b;
-  } else if (operation == "-") {
-    total = a - b;
-  } else if (operation == "*") {
-    total = a * b;
-  } else if (operation == "/") {
-    total = a / b;
-  } else {
-    console.log("Invalid Operation");
-  }
-  res.json({ total });
-});
-
-app.get("/calculation", (req, res) => {
-  let { a, b, operation } = req.query;
-  a = Number(a);
-  b = Number(b);
-  let total = 0;
-
-  if (Number.isNaN(a) || Number.isNaN(b)) {
-    res.send("Please Enter A Valid Number");
-    return;
-  }
-
-  // on query you can't put + because express will parse it as a blank space, you need to put it's url encoding which is %2B so that express will translate it back into +
-  if (operation == "+") {
-    total = a + b;
-  } else if (operation == "-") {
-    total = a - b;
-  } else if (operation == "*") {
-    total = a * b;
-  } else if (operation == "/") {
-    total = a / b;
-  } else {
-    console.log("Invalid Operation");
-  }
-  res.json({ total });
-});
+app.get("/calculation", calculateQuery);
 
 // express 5 no longer use this
 // app.all("*", (req, res) => {
