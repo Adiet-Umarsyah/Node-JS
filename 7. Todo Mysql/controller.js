@@ -1,31 +1,46 @@
+import { getData, createData, updateData, deleteData } from "./model.js";
+
 let todo = new Array();
 
-export const showTasks = (req, res) => {
-  let task = new Array();
-  if (todo.length > 0) {
-    for (let i = 0; i < todo.length; i++) {
-      task.push(`${i + 1}. ${todo[i]}`);
-    }
-    res.json(task);
-  } else {
-    res.send("You Have No Task");
+export const showTasks = async (req, res) => {
+  try {
+    const data = await getData();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error in getDatas controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-export const addTask = (req, res) => {
-  const task = req.body.task;
-  todo.push(task);
-  res.send("Task Added Successfully");
+export const addTask = async (req, res) => {
+  try {
+    const { task } = req.body;
+    const result = await createData(task);
+    res.status(201).json(result);
+  } catch (error) {
+    console.error("Error in addTask controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-export const updateTask = (req, res) => {
-  const { index, task } = req.body;
-  todo[index - 1] = task;
-  res.send("Task Updated Successfully");
+export const updateTask = async (req, res) => {
+  try {
+    const { id, task } = req.body;
+    const result = await updateData(id, task);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in updateTask controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-export const deleteTask = (req, res) => {
-  const index = req.body.index;
-  todo.splice(index - 1, 1);
-  res.send("Task Deleted Successfully");
+export const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const result = await deleteData(id);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in deleteTask controller:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
