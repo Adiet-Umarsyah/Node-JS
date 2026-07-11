@@ -1,9 +1,9 @@
-import { connectDB } from "./db.js";
+import { connectDB } from "../db.js";
 
 export const getAllData = async () => {
   const db = await connectDB();
   try {
-    const sql = "SELECT * FROM student";
+    const sql = "SELECT * FROM students";
     const [rows] = await db.execute(sql);
     await db.end();
     return rows;
@@ -16,7 +16,7 @@ export const getData = async (id) => {
   const db = await connectDB();
   try {
     const sql =
-      "SELECT class.className, student.studentName FROM student JOIN class ON student.classID = class.classID WHERE studentID = ?";
+      "SELECT class.className, students.studentName FROM students JOIN class ON students.classID = class.classID WHERE studentID = ?";
     const [rows] = await db.execute(sql, [id]);
     await db.end();
     return rows;
@@ -28,7 +28,7 @@ export const getData = async (id) => {
 export const createData = async (name, id) => {
   const db = await connectDB();
   try {
-    const sql = "INSERT INTO student (studentName, classID) VALUES (?,?)";
+    const sql = "INSERT INTO students (studentName, classID) VALUES (?,?)";
     const [result] = await db.execute(sql, [name, id]);
     await db.end();
     return result;
@@ -54,7 +54,7 @@ export const updateData = async (id, name, classid) => {
     throw new Error("No fields provided to update");
   }
 
-  const sql = `UPDATE student SET ${fields.join(", ")} WHERE studentID = ?`;
+  const sql = `UPDATE students SET ${fields.join(", ")} WHERE studentID = ?`;
   values.push(id);
 
   const db = await connectDB();
@@ -69,7 +69,7 @@ export const updateData = async (id, name, classid) => {
 export const deleteData = async (id) => {
   const db = await connectDB();
   try {
-    const sql = "DELETE FROM student WHERE studentID = ?";
+    const sql = "DELETE FROM students WHERE studentID = ?";
     const [result] = await db.execute(sql, [id]);
     await db.end();
     return result;

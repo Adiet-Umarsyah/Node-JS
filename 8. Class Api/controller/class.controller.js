@@ -4,7 +4,7 @@ import {
   createData,
   updateData,
   deleteData,
-} from "./class.model.js";
+} from "../models/class.model.js";
 
 export const getAllClass = async (req, res) => {
   try {

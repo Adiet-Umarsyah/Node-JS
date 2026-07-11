@@ -5,7 +5,7 @@ import {
   addClass,
   updateClass,
   deleteClass,
-} from "./class.controller.js";
+} from "../controller/class.controller.js";
 
 const router = express.Router();
 

@@ -1,4 +1,4 @@
-import { connectDB } from "./db.js";
+import { connectDB } from "../db.js";
 
 export const getAllData = async () => {
   const db = await connectDB();
@@ -16,7 +16,7 @@ export const getData = async (id) => {
   const db = await connectDB();
   try {
     const sql =
-      "SELECT class.className, student.studentName FROM class JOIN student ON class.classID = student.classID WHERE class.classID = ?";
+      "SELECT class.className, students.studentName FROM class JOIN students ON class.classID = students.classID WHERE class.classID = ?";
     const [rows] = await db.execute(sql, [id]);
     await db.end();
     return rows;

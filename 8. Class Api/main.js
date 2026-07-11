@@ -1,6 +1,6 @@
 import express from "express";
-import studentRoute from "./student.route.js";
-import classRoute from "./class.route.js";
+import studentRoute from "./routes/student.route.js";
+import classRoute from "./routes/class.route.js";
 
 const app = express();
 

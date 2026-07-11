@@ -4,7 +4,7 @@ import {
   createData,
   updateData,
   deleteData,
-} from "./student.model.js";
+} from "../models/student.model.js";
 
 export const getAllStudent = async (req, res) => {
   try {
