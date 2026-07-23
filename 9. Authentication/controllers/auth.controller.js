@@ -1,6 +1,6 @@
 import { getData, insertData } from "../models/auth.model.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { generateToken } from "../utils/token.js";
 
 export const userLogin = async (req, res) => {
   try {
@@ -14,18 +14,7 @@ export const userLogin = async (req, res) => {
       return res.status(400).json({ error: "Invalid credentials" });
     }
 
-    const secretKey = "KzO1#@KRyh/c4]gM}hb?:]0sMuokMvuQRICgKisY{<o";
-
-    const token = jwt.sign({ email: data.email }, secretKey, {
-      expiresIn: "1h",
-    });
-
-    res.cookie("jwt", token, {
-      // Cookie expiration (1 hour in milliseconds)
-      maxAge: 60 * 60 * 1000,
-      httpOnly: true,
-      sameSite: "strict",
-    });
+    generateToken(data.email, res);
 
     res.status(200).json({ message: "Login successful" });
   } catch (error) {
