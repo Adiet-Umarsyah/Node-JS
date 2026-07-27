@@ -1,5 +1,6 @@
 import express from "express";
 import teacherRoute from "./routes/teacher.route.js";
+import authRoute from "./routes/auth.route.js";
 
 const app = express();
 
@@ -8,6 +9,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+
+app.use("/auth", authRoute);
 
 app.use("/teacher", teacherRoute);
 
