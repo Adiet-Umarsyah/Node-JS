@@ -25,6 +25,18 @@ export const getData = async (name) => {
     await db.end();
   }
 };
+export const checkData = async (id) => {
+  const db = await connectDB();
+  try {
+    const sql = "SELECT * FROM students WHERE studentID = ?";
+    const [rows] = await db.execute(sql, [id]);
+    return rows[0];
+  } catch (error) {
+    return error.message;
+  } finally {
+    await db.end();
+  }
+};
 
 export const createData = async (name, id, status) => {
   const db = await connectDB();

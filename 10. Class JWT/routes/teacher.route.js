@@ -6,6 +6,7 @@ import {
   updateStudent,
   deleteStudent,
 } from "../controller/teacher.controller.js";
+import { cookieReader } from "../middleware/middleware.js";
 
 const router = express.Router();
 
@@ -13,10 +14,10 @@ router.get("/", getAllStudent);
 
 router.get("/:id", getStudent);
 
-router.post("/", addStudent);
+router.post("/", cookieReader, addStudent);
 
-router.put("/:id", updateStudent);
+router.put("/:id", cookieReader, updateStudent);
 
-router.delete("/:id", deleteStudent);
+router.delete("/:id", cookieReader, deleteStudent);
 
 export default router;
